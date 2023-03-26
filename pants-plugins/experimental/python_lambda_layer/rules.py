@@ -6,6 +6,7 @@ from pants.backend.python.util_rules.pex_cli import PexPEX
 from pants.backend.python.util_rules.pex import (
     Pex,
     PexEnvironment,
+    VenvPex,
 )
 from pants.backend.python.util_rules.pex_from_targets import PexFromTargetsRequest
 from pants.core.goals.package import BuiltPackage, PackageFieldSet
@@ -57,7 +58,7 @@ async def do_it(
     targets = await Get(Targets, DependenciesRequest(field_set.dependencies))
 
     requirements_pex = await Get(
-        Pex,
+        VenvPex,
         PexFromTargetsRequest(
             output_filename="requirements.pex",
             addresses=[tgt.address for tgt in targets],
@@ -73,10 +74,9 @@ async def do_it(
     )
 
     argv = complete_pex_env.create_argv(
-        requirements_pex.name,
+        "requirements.pex",
         *[
             "venv",
-            "--pip",
             "--collisions-ok",
             "--scope=deps",
             "./venv",
@@ -102,16 +102,8 @@ async def do_it(
         Digest,
         RemovePrefix(venv.output_digest, "venv/lib/python3.9/site-packages"),
     )
-    no_tools = await Get(
-        Digest,
-        DigestSubset(
-            strip_venv,
-            PathGlobs(
-                ["**", "!pip*", "!setuptools*", "!_distutils_hack", "!pkg_resources"]
-            ),
-        ),
-    )
-    python_directory = await Get(Digest, AddPrefix(no_tools, "python"))
+
+    python_directory = await Get(Digest, AddPrefix(strip_venv, "python"))
     snapshot = await Get(Snapshot, Digest, python_directory)
 
     zip = await Get(
