@@ -11,11 +11,6 @@ provider:
   runtime: python3.9
   region: eu-west-2
 
-layers:
-  numpy:
-    package:
-      artifact: ../../dist/layer.zip
-
 resources:
   Outputs:
     LayerVersion:

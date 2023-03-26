@@ -4,28 +4,19 @@ frameworkVersion: "3"
 
 plugins:
   - serverless-better-credentials
-  - serverless-ssm-publish
+
+package:
+  individually: true
 
 provider:
   name: aws
   runtime: python3.9
   region: eu-west-2
 
-layers:
-  numpy:
+functions:
+  hello:
+    handler: lambda.handler.handle
     package:
-      artifact: ../../dist/layer.zip
-
-resources:
-  Outputs:
-    LayerVersion:
-      Value:
-        Ref: NumpyLambdaLayer
-
-custom:
-  ssmPublish:
-    enabled: true
-
-    params:
-      - path: /pants-layer/numpy/latest
-        source: LayerVersion
+      artifact: ../../dist/src.lambda/main.pex
+    layers:
+      - ${ssm:/pants-layer/numpy/latest}
