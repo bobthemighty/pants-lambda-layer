@@ -1,0 +1,22 @@
+[GLOBAL]
+pants_version = "2.15.0"
+print_stacktrace = true
+pythonpath = ["pants-plugins"]
+
+backend_packages = [
+  "pants.backend.python",
+  "pants.backend.plugin_development",
+  "experimental.python_lambda_layer"
+]
+
+[source]
+root_patterns = ["src"]
+
+[python]
+# The default interpreter compatibility for code in this repo. Individual targets can override
+#  this with the `compatibility` field. See
+#  https://www.pantsbuild.org/docs/python-interpreter-compatibility.
+interpreter_constraints = [">=3.9,<3.10"]
+# Use a lockfile. See https://www.pantsbuild.org/docs/python-third-party-dependencies.
+enable_resolves = true
+resolves = { python-default = "lockfiles/python-default.lock" }

@@ -1,0 +1,16 @@
+{
+  "name": "pants-layer-serverless",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "serverless": "^3.29.0",
+    "serverless-better-credentials": "^1.1.3",
+    "serverless-ssm-publish": "^1.5.0"
+  }
+}

@@ -1,0 +1,31 @@
+service: pants-lambda
+
+frameworkVersion: "3"
+
+plugins:
+  - serverless-better-credentials
+  - serverless-ssm-publish
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: eu-west-2
+
+layers:
+  numpy:
+    package:
+      artifact: ../../dist/layer.zip
+
+resources:
+  Outputs:
+    LayerVersion:
+      Value:
+        Ref: NumpyLambdaLayer
+
+custom:
+  ssmPublish:
+    enabled: true
+
+    params:
+      - path: /pants-layer/numpy/latest
+        source: LayerVersion

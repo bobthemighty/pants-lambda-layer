@@ -1,0 +1,9 @@
+.DS_Store
+.idea
+*.log
+tmp/
+
+dist
+src/node_modules
+/.pants.d/
+/.pids/

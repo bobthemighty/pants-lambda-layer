@@ -1,0 +1,125 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "NumpyLambdaLayer": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/pants-layer/dev/1679825571499-2023-03-26T10:12:51.499Z/layer.zip"
+        },
+        "LayerName": "numpy"
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      },
+      "Export": {
+        "Name": "sls-pants-layer-dev-ServerlessDeploymentBucketName"
+      }
+    },
+    "NumpyLambdaLayerQualifiedArn": {
+      "Description": "Current Lambda layer version",
+      "Value": {
+        "Ref": "NumpyLambdaLayer"
+      },
+      "Export": {
+        "Name": "sls-pants-layer-dev-NumpyLambdaLayerQualifiedArn"
+      }
+    },
+    "NumpyLambdaLayerHash": {
+      "Description": "Current Lambda layer hash",
+      "Value": "59af7cf46d96775f1b9498df190aa8a739215aa7",
+      "Export": {
+        "Name": "sls-pants-layer-dev-NumpyLambdaLayerHash"
+      }
+    },
+    "NumpyLambdaLayerS3Key": {
+      "Description": "Current Lambda layer S3Key",
+      "Value": "serverless/pants-layer/dev/1679825571499-2023-03-26T10:12:51.499Z/layer.zip",
+      "Export": {
+        "Name": "sls-pants-layer-dev-NumpyLambdaLayerS3Key"
+      }
+    },
+    "LayerVersion": {
+      "Value": {
+        "Ref": "NumpyLambdaLayer"
+      }
+    }
+  }
+}
