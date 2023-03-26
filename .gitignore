@@ -8,3 +8,4 @@ src/node_modules
 /.pants.d/
 /.pids/
 /src/lambda/.serverless/
+*.pyc
